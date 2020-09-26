@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Jinja Test Page</title>
+</head>
+<body>
+<div> Jina Test: {{title}} - {{mu}} </div>
+<hr>
+<pre>
+ttt 한글
+{% if True %}
+    TTT
+{% endif %}qqq
+</pre>
+<pre>
+ttt 한글
+{%- if True -%}
+    TTT
+{%- endif -%}qqq
+</pre>
+<hr>
+{{ "abc{ef}ghi" }}
+{{ 'abc{ef}ghi' }}
+<hr>
+{{ "}}>> <strong>Strong</strong>"}}
+{{ '}}>> <strong>Strong</strong>' | escape }}
+{{ '}}>> <strong>Strong</strong>' | e }}
+<hr>
+{{ "<strong>Strong1</strong>" | safe}}
+{{ "<strong>Strong2</strong>" | striptags}}
+<hr>
+<pre>
+{% raw %}
+	{% if True  %}
+    		TTT
+	{% endif %}
+{% endraw %}
+</pre>
+
+</body>
+</html>
