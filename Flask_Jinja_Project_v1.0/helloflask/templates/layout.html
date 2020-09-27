@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Layout</title>
+</head>
+
+<body>
+    <h1>
+        {%block title%}타이틀{%endblock%}-Layout Title</h1>
+    <div class="section">
+        {%block section%}SECTION{%endblock%}
+    </div>
+
+    {% block outer_block %}
+    <h3>
+        {% block inner_block %}{% endblock inner_block %}-
+    </h3>
+    {% endblock outer_block %} {%block footer%}
+    <p>&copy; Copyright...</p>
+    {%endblock%}
+</body>
+
+</html>

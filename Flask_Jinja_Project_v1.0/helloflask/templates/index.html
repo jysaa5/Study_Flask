@@ -1,44 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Jinja Test Page</title>
-</head>
-<body>
-<div> Jina Test: {{title}} - {{mu}} </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Jinja Test Page</title>
+		<link rel="stylesheet" href="static/css/style.css">
+		<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    </head>
+    <body>
+        <div>
+            Jina Test:
+            {{title}}-{{mu}}
+        </div>
+		<hr>
+		Copyright <a href="/tmpl">IndiFlex Senior Coding</a>
+		Copyright <a href="{{ url_for('tmpl') }}">IndiFlex Senior Coding</a>
+        <hr>
+        <ul>
+            {% for item in lst %}
+                <li>{{item[0]}}: {{item[1]}}</li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <ul>
+            {% for title, name in lst %}
+                <li>{{title}}: {{name}} - {{loop.index}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for title, name in lst %}
+                <li>{{title}}: {{name}} - {{loop.index0}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for title, name in lst %}
+                <li>{{title}}: {{name}} - {{loop.revindex}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for title, name in lst %}
+                <li>{{title}}: {{name}} - {{loop.revindex0}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for title, name in lst %}
+                <li>{{title}}: {{name}} - {{loop.first}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for title, name in lst %}
+                <li>{{title}}: {{name}} - {{loop.last}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for title, name in lst %}
+                <li class="{{loop.cycle('aaa','bbb')}}">{{title}}: {{name}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for rank, title, name, hide in lst1 if not hide %}
+                <li class="{{loop.cycle('aaa','bbb')}}">{{title}}: {{name}}</li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for rank, title, name, hide in lst2 if not hide %}
+                <li class="{{loop.cycle('aaa','bbb')}}">{{title}}: {{name}}</li>
+			{% else %}
+			    <li>There is no data.</li>
+            {% endfor %}
+        </ul>
+
+        <ul>
+             {% for rank, title, name, hide, ref in lst3 recursive %}
+                <li> {{title}}: {{name}}
+				     <ul class="sub">{{ loop(ref) }}</ul>
+                </li>
+            {% endfor %}
+        </ul>
 <hr>
-<pre>
+		<ul>
+		{% for rank, title, name, hide, ref in lst3 recursive%}
+		<li>
+		     {{title}}:{{name}} - {{loop.depth}}
+		     {%if ref%}
+		      <ul class="{% if loop.depth == 3%} sub {% endif %}">
+		          {{loop(ref)}}
+		      </ul>
+		     {% endif %}
+		</li>
+		{% endfor %}
+		</ul>
+<hr>
+
+{% set title = 'ABC' %}
+{{title}}
+<ul>
+    {% for rank, title, name, hide, ref in lst3 recursive %}
+    <li>
+        {{loop.index}} - <small>{{title}}</small>: {{name}}
+        {%- if ref -%}
+            {% set outer_loop = loop %}
+            {% for ref_song in ref %}
+                <p>{{outer_loop.index}} - {{loop.index}} : {{ ref_song[1] }}</p>
+            {% endfor %}
+        {%- endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<ul>
+    {% for nav in navs recursive %}
+    <li>
+        <a href="{{nav.url | e}}">{{nav.title}} - {{loop.depth}}</a>
+        {%- if nav.children -%}
+            <ul class="{%if (loop.depth==1)%} font-sm{% endif %}">
+			{{loop(nav.children)}}
+			</ul>
+        {%- endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+        <hr>
+        <pre>
 ttt 한글
-{% if True %}
-    TTT
+{% if true %}
+    ttt
 {% endif %}qqq
 </pre>
-<pre>
+        <pre>
 ttt 한글
-{%- if True -%}
-    TTT
+{%- if true -%}
+    ttt
 {%- endif -%}qqq
 </pre>
-<hr>
-{{ "abc{ef}ghi" }}
-{{ 'abc{ef}ghi' }}
-<hr>
-{{ "}}>> <strong>Strong</strong>"}}
-{{ '}}>> <strong>Strong</strong>' | escape }}
-{{ '}}>> <strong>Strong</strong>' | e }}
-<hr>
-{{ "<strong>Strong1</strong>" | safe}}
-{{ "<strong>Strong2</strong>" | striptags}}
-<hr>
-<pre>
+        <hr>
+        {{ "abc{ef}ghi" }}
+        {{ 'abc{ef}ghi' }}
+        <hr>
+        {{ "}}>> <strong>Strong</strong>"}}
+        {{ '}}>> <strong>Strong</strong>' | escape }}
+        {{ '}}>> <strong>Strong</strong>' | e }}
+        <hr>
+        {{ "<strong>Strong1</strong>" | safe}}
+        {{ "<strong>Strong2</strong>" | striptags}}
+        <hr>
+        <pre>
 {% raw %}
-	{% if True  %}
-    		TTT
+	{% if true  %}
+    		ttt
 	{% endif %}
 {% endraw %}
 </pre>
 
-</body>
+    </body>
 </html>

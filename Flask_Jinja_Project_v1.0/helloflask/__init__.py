@@ -32,9 +32,9 @@ def helloworld2():
     return "Hello Flask World!"+getattr(g, 'str', '111') #세번째 인자는 default 값
 
 # URI를 정의하는 것을 route이다.
-@app.route("/")
-def helloworld():
-    return "Hello Flask World!" # 응답
+# @app.route("/")
+# def helloworld():
+#     return "Hello Flask World!" # 응답
 
 
 @app.route('/res1')
@@ -142,8 +142,115 @@ def tmpl():
     h = mu % "Italic"
     print(">>>>>>>>>>>", type(tit))
     print("h= ", h)
+    
     bold = Markup("<b>Bold</b>")
     bold2 = Markup.escape("<b>Bold</b>")
     bold3 = bold2.unescape()
     print(bold, bold2, bold3)
-    return render_template('index.html', title=tit, mu=h)
+    lst = [ ("노래1", "때껄룩"), ("노래2", "기리보이"), ("노래3", "수현"), ("노래4", "유노윤호")]
+    lst1 = [ (1, "노래1", "때껄룩", False), (2, "노래2", "기리보이", True), (3, "노래3", "수현",False), (4, "노래4", "유노윤호", True)]
+    return render_template('index.html', title=tit, mu=h, lst=lst, lst1=lst1, lst2=[])
+
+
+@app.route('/tmpl2')
+def tmpl2():
+    a = (1, "만남1", "김건모", False, [])
+    b = (2, "만남2", "노사연", True, [a])
+    c = (3, "만남3", "익명", False, [a,b])
+    d = (4, "만남4", "익명", False, [a,b,c])
+
+    return render_template("index.html", lst3=[a,b,c,d])
+
+
+class Nav:
+    def __init__(self, title, url='#', children=[]):
+        self.title = title
+        self.url = url
+        self.children = children
+
+@app.route('/tmpl3')
+def tmpl3():
+    py = Nav("파이썬", "https://www.naver.com")
+    java = Nav("자바", "https://www.naver.com")
+    t_prg = Nav("프로그래밍 언어", "https://www.naver.com", [py, java])
+
+    jinja = Nav("jinja", "https://www.naver.com")
+    gc = Nav("Genshi, cheetah", "https://www.naver.com")
+    flask = Nav("플라스크", "https://www.naver.com", [jinja, gc])
+
+    spr = Nav("스프링", "https://www.naver.com")
+    ndjs = Nav("노드JS", "https://www.naver.com")
+    t_webf = Nav("웹 프레임워크", "https://www.naver.com", [flask, spr, ndjs])
+
+    my = Nav("나의 일상", "https://www.naver.com")
+    issue = Nav("이슈 게시판", "https://www.naver.com")
+    t_others = Nav("기타", "https://www.naver.com", [my, issue])
+
+    return render_template("index.html", navs=[t_prg, t_webf, t_others])
+
+
+@app.route('/main')
+def main():
+    return render_template('main.html')
+
+
+@app.route('/top100')
+def top100():
+    return render_template('application.html', title="Main!!")
+
+class FormInput:
+    def __init__(self, id, name , value, checked, text):
+        self.id = id
+        self.name = name
+        self.value = value
+        self.checked = checked
+        self.text = text
+
+
+@app.route('/')
+def idx():
+    rds=[]
+    for i in [1,2,3]:
+        id='r'+str(i)
+        name='radiotest'
+        value=i
+        checked=''
+        if i == 2:
+            checked='checked'
+        text = 'RadioTest' + str(i)
+        rds.append(FormInput(id, name, value, checked, text))
+    
+    #today = date.today()
+    #today = datetime.now()
+    today = '2020-09-26 12:01'
+    return render_template('app.html', ttt='TestTTT', radioList=rds, today=today)
+
+
+@app.template_filter('ymd')               # cf. Handlebars' helper
+def datetime_ymd(dt, fmt='%m-%d'):
+    if isinstance(dt, date):
+        #return dt.strftime(fmt)
+        return "<strong>%s</strong>" %dt.strftime(fmt)
+    else:
+        return dt
+
+
+@app.template_filter('symd')               # cf. Handlebars' helper
+def datetime_symd(dt, fmt='%m-%d'):
+    if isinstance(dt, date):
+        #return dt.strftime(fmt)
+        return "<strong>%s</strong>" %dt.strftime(fmt)
+    else:
+        return dt
+
+@app.template_filter('simpledate')               # cf. Handlebars' helper
+def simpledate(dt):
+    if not isinstance(dt, date):
+        dt = datetime.strptime(dt, '%Y-%M-%d %H:%m')
+
+    if (datetime.now()-dt).days<1:
+        fmt = "%H:%m"
+    else:
+        fmt = "%M/%d"
+
+    return "<strong>%s</strong>" % dt.strftime(fmt)
