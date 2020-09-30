@@ -1,9 +1,70 @@
-{% extends "base.html"%} {% import "macro/tests.html" as cm with context %} {% from "macro/tests.html" import test_macro%} {% from "macro/forms.html" import input, radio, radios, textarea, checkbox, select, modal %} {% block test%}
+{% extends "base.html"%} {% import "macro/tests.html" as cm with context %} {% from "macro/tests.html" import test_macro%} {% from "macro/forms.html" import input, radio, radios, textarea, checkbox, select, modal %} {% macro cal(dt)%}
+<div class="container text-center">
+    <h1>{{dt | month}}월</h1>
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                {%- for w in '일월화수목금토' %}
+                <th>{{w}}</th>
+                {%endfor-%}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in range(dt | sdt, dt | edt) | batch(7, '&nbsp;') %}
+            <tr>
+                {% for col in row %}
+                <td>{%if ((col | int)
+                    <=0) %}&nbsp;{%else%}{{col | safe}}{%endif%}</td>
+                        {%endfor%}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endmacro %} {% block test%}
+<div>
+    <h1 class="text-center text-danger">
+        <small>
+        <a href="/?year={{year-1}}" class="text-muted">{{year+1}}</a>
+        </small> {{year}}년
+        <small>
+            <a href="/?year={{year+1}}" class="text-muted">{{year+1}}</a>
+        </small>
+    </h1>
+    <div class="row">
+        {% for mm in range(1, 13) | batch(3) %} {% for m in mm %}
+        <div class="col">
+            {% set dt = '%s-%s-01' % (year, m)%} {{cal(dt)}}
+        </div>
+        {% endfor %} {% endfor %}
+    </div>
+</div>
+
 <p>{{today | ymd}}</p>
 <p>{{today | ymd('%Y-%m')}}</p>
 <p>{{today | ymd('%y-%m')}}</p>
 <p>{{today | symd('%y-%m') | safe}}</p>
 <p>Simpledate: {{today | simpledate | safe}}</p>
+<p>{{ 3096 | filesizeformat }}</p>
+<p>{{" 3096.53456"| float | round(2)}}</p>
+<pre>
+<p>{{'abc' | center(40)}}</p>
+<p>{{'abcdfdsfsdfdsfsdfsdfsdf' | center(40)}}</p>
+<p>{{('abcdfdsfsdfdsfsdfsdfsdf'*5)| wordwrap(40)}}</p>
+<p>{{('abcdfdsfsdfdsfsdfsdfsdf'*5)| truncate(40)}}</p>
+</pre>
+<div>
+    <table>
+        {% for row in range(1, 32) | batch(7, '&nbsp;') %}
+        <tr>
+            {% for col in row %}
+            <td>{{col | safe}}</td>
+            {%endfor%}
+        </tr>
+        {% endfor %}
+    </table>
+    <hr>
+</div>
 <p>{{ttt}}:::{{cm.test_macro('TTTTTTTTTTTTTT')}}</p>
 <p>{{test_macro('KKKKKKKKKKK')}}</p>
 

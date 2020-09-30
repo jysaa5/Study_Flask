@@ -1,6 +1,7 @@
 from flask import Flask, g, request, Response, make_response
 from flask import session, render_template, Markup
 from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 
 # Flask  생성
 app = Flask(__name__)
@@ -223,8 +224,19 @@ def idx():
     #today = date.today()
     #today = datetime.now()
     today = '2020-09-26 12:01'
-    return render_template('app.html', ttt='TestTTT', radioList=rds, today=today)
-
+    d = datetime.strptime("2020-01-01", "%Y-%m-%d")
+    #sdt = d.weekday()*-1
+    #print(sdt)
+    #nextMonth = d + relativedelta(months=1)
+    #print(nextMonth)
+    #mm = d.month
+    #print(mm)
+    #edt = (nextMonth-timedelta(1)).day+1
+    #print(edt)
+    #return render_template('app.html', ttt='TestTTT', mm=mm, edt=edt, sdt=sdt, radioList=rds, today=today)
+    #year = 2020
+    year = request.args.get('year', date.today().year, int)
+    return render_template('app.html', ttt='TestTTT', year=year, radioList=rds, today=today)
 
 @app.template_filter('ymd')               # cf. Handlebars' helper
 def datetime_ymd(dt, fmt='%m-%d'):
@@ -254,3 +266,30 @@ def simpledate(dt):
         fmt = "%M/%d"
 
     return "<strong>%s</strong>" % dt.strftime(fmt)
+
+def make_date(dt, fmt):
+    if not isinstance(dt, date):
+        return datetime.strptime(dt, fmt)
+    else:
+        return dt
+
+@app.template_filter('sdt')
+def sdt(dt, fmt='%Y-%m-%d'):
+    d = make_date(dt, fmt)
+    wd = d.weekday()
+    # if wd==6:
+    #     return 1
+    # else:
+    #     return wd
+    return (-1 if wd == 6 else wd) * -1
+
+@app.template_filter('month')
+def month(dt, fmt='%Y-%m-%d'):
+    d = make_date(dt, fmt)
+    return d.month
+
+@app.template_filter('edt')
+def edt(dt, fmt='%Y-%m-%d'):
+    d = make_date(dt, fmt)
+    nextMonth = d + relativedelta(months=1)
+    return (nextMonth-timedelta(1)).day + 1
